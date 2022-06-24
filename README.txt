@@ -7,7 +7,7 @@ Plugin URI: https://connekthq.com/ajax-load-more/extensions/terms/
 Donate link: https://connekthq.com/donate/
 Tags: wp_term_query, get_terms, category, tag, taxonomy, terms, infinite scroll, load more
 Requires at least: 4.0
-Tested up to: 5.4.0
+Tested up to: 6.0
 Stable tag: 1.0
 License: GPLv2 or later
 License URI: http://gnu.org/licenses/gpl-2.0.html
