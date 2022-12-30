@@ -64,11 +64,11 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 		 * @since 1.0
 		 */
 		public function __construct() {
-			add_action( 'alm_terms_installed', array( &$this, 'alm_terms_installed' ) );
-			add_filter( 'alm_terms_shortcode', array( &$this, 'alm_terms_shortcode' ), 10, 6 );
-			add_filter( 'alm_terms_preloaded', array( &$this, 'alm_terms_preloaded_query' ), 10, 4 );
-			add_action( 'wp_ajax_alm_get_terms', array( &$this, 'alm_get_terms_query' ) );
-			add_action( 'wp_ajax_nopriv_alm_get_terms', array( &$this, 'alm_get_terms_query' ) );
+			add_action( 'alm_terms_installed', [ &$this, 'alm_terms_installed' ] );
+			add_filter( 'alm_terms_shortcode', [ &$this, 'alm_terms_shortcode' ], 10, 6 );
+			add_filter( 'alm_terms_preloaded', [ &$this, 'alm_terms_preloaded_query' ], 10, 4 );
+			add_action( 'wp_ajax_alm_get_terms', [ &$this, 'alm_get_terms_query' ] );
+			add_action( 'wp_ajax_nopriv_alm_get_terms', [ &$this, 'alm_get_terms_query' ] );
 		}
 
 		/**
@@ -94,12 +94,12 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 
 			if ( $term_query ) {
 
-				$args = array(
+				$args = [
 					'taxonomy'   => explode( ',', $term_query_taxonomy ),
 					'number'     => $term_query_number,
 					'hide_empty' => $term_query_hide_empty,
 					'offset'     => $offset,
-				);
+				];
 
 				/**
 				 * ALM Term Query Filter Hook
@@ -199,12 +199,12 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 				$offset                = $offset + ( $term_query_number * $page );
 
 				if ( $term_query ) {
-					$args = array(
+					$args = [
 						'taxonomy'   => explode( ',', $term_query_taxonomy ),
 						'hide_empty' => $term_query_hide_empty,
 						'number'     => $term_query_number,
 						'offset'     => $offset,
-					);
+					];
 
 					/**
 					 * ALM Term Query Filter Hook
@@ -218,7 +218,9 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 
 					if ( $query_type === 'totalposts' ) {
 						// Paging add-on.
-						$return = array( 'totalposts' => $this->alm_terms_count( $args, $original_offset ) );
+						$return = [
+							'totalposts' => $this->alm_terms_count( $args, $original_offset ),
+						];
 
 					} else {
 						// Standard ALM.
@@ -244,13 +246,13 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 							}
 							$data = ob_get_clean();
 
-							$return = array(
+							$return = [
 								'html' => $data,
-								'meta' => array(
+								'meta' => [
 									'postcount'  => $alm_post_count,
 									'totalposts' => $alm_found_posts,
-								),
-							);
+								],
+							];
 
 							/**
 							 * Cache Add-on hook
@@ -264,13 +266,13 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 							}
 						} else {
 							// No Results.
-							$return = array(
+							$return = [
 								'html' => null,
-								'meta' => array(
+								'meta' => [
 									'postcount'  => 0,
 									'totalposts' => 0,
-								),
-							);
+								],
+							];
 						}
 					}
 				}
