@@ -7,11 +7,11 @@
  * Author: Darren Cooney
  * Twitter: @KaptonKaos
  * Author URI: https://connekthq.com
- * Version: 1.0
+ * Version: 1.1
  * License: GPL
  * Copyright: Darren Cooney & Connekt Media
  *
- * @package ALM_TERMS
+ * @package ajax-load-more-for-terms
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,7 +33,7 @@ register_activation_hook( __FILE__, 'alm_terms_install' );
  */
 function alm_terms_admin_notice() {
 	$slug   = 'ajax-load-more';
-	$plugin = $slug . '-for-searchwp';
+	$plugin = $slug . '-for-terms';
 	// Ajax Load More Notice.
 	if ( get_transient( 'alm_terms_admin_notice' ) ) {
 		$install_url = get_admin_url() . '/update.php?action=install-plugin&plugin=' . $slug . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug );
@@ -93,7 +93,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$term_query            = empty( $term_query_taxonomy ) ? false : $term_query;
 
 			if ( $term_query ) {
-
 				$args = [
 					'taxonomy'   => explode( ',', $term_query_taxonomy ),
 					'number'     => $term_query_number,
@@ -119,7 +118,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 				$data            = '';
 
 				if ( $alm_term_query->terms ) {
-
 					ob_start();
 					foreach ( $alm_term_query->terms as $term ) {
 						$alm_item++;
@@ -163,7 +161,9 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$query_type      = isset( $form_data['query_type'] ) ? sanitize_text_field( $form_data['query_type'] ) : 'standard';
 
 			// Cache Add-on.
-			$cache_id = isset( $form_data['cache_id'] ) ? sanitize_text_field( $form_data['cache_id'] ) : '';
+			$cache_id        = isset( $form_data['cache_id'] ) ? sanitize_text_field( $form_data['cache_id'] ) : '';
+			$cache_logged_in = isset( $form_data['cache_logged_in'] ) ? sanitize_text_field( $form_data['cache_logged_in'] ) : false;
+			$do_create_cache = $cache_logged_in === 'true' && is_user_logged_in() ? false : true;
 
 			// Preloaded Add-on.
 			$preloaded        = isset( $form_data['preloaded'] ) ? sanitize_text_field( $form_data['preloaded'] ) : false;
@@ -176,17 +176,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 
 			// SEO Add-on.
 			$seo_start_page = isset( $form_data['seo_start_page'] ) ? sanitize_text_field( $form_data['seo_start_page'] ) : 1;
-
-			/**
-			 * Cache Add-on hook.
-			 * Create cache directory + meta .txt file.
-			 *
-			 * @return void
-			 */
-			if ( ! empty( $cache_id ) && has_action( 'alm_cache_create_dir' ) ) {
-				apply_filters( 'alm_cache_create_dir', $cache_id, $canonical_url );
-				$page_cache = '';
-			}
 
 			// Get Term Data.
 			if ( $data ) {
@@ -212,6 +201,20 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 					 * @return $args;
 					 */
 					$args = apply_filters( 'alm_term_query_args_' . $id, $args );
+
+					// MD5 hash of query $args.
+					$md5_hash = $cache_id ? md5( wp_json_encode( $args ) ) : '';
+
+					/**
+					 * Cache Add-on.
+					 * Check for cached data before running WP_Query.
+					 */
+					if ( $cache_id && method_exists( 'ALMCache', 'get_cache_file' ) && $query_type !== 'totalposts' ) {
+						$cache_data = ALMCache::get_cache_file( $cache_id, $md5_hash );
+						if ( $cache_data ) {
+							wp_send_json( $cache_data );
+						}
+					}
 
 					// WP_Term_Query.
 					$alm_term_query = new WP_Term_Query( $args );
@@ -260,9 +263,8 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 							 *
 							 * @return void
 							 */
-							if ( ! empty( $data ) && ! empty( $cache_id ) && has_action( 'alm_cache_installed' ) ) {
-								$cache_page = $page + 1;
-								apply_filters( 'alm_nextpage_cache_file', $cache_id, $cache_page, $data );
+							if ( $cache_id && method_exists( 'ALMCache', 'create_cache_file' ) && $do_create_cache ) {
+								ALMCache::create_cache_file( $cache_id, $md5_hash, $canonical_url, $data, $alm_post_count, $alm_found_posts );
 							}
 						} else {
 							// No Results.
