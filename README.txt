@@ -70,8 +70,8 @@ Once installed, visit the Ajax Load More Shortcode Builder and build a custom sh
 
 == Changelog ==
 
-= 1.1 - May 10, 2023 = 
-* UPDATE: Updated support for Cache add-on changes in Ajax Load More 6.0.
+= 1.1 - May 5, 2023 = 
+* UPDATE: Updated support for changes in Cache Add-on 2.0 and Ajax Load More 6.0.
 
 
 = 1.0 - March 13, 2020 =
