@@ -203,17 +203,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 					 */
 					$args = apply_filters( 'alm_term_query_args_' . $id, $args );
 
-					/**
-					 * Cache Add-on.
-					 * Check for cached data before running WP_Query.
-					 */
-					if ( $cache_id && method_exists( 'ALMCache', 'get_cache_file' ) && $query_type !== 'totalposts' ) {
-						$cache_data = ALMCache::get_cache_file( $cache_id, $cache_slug );
-						if ( $cache_data ) {
-							wp_send_json( $cache_data );
-						}
-					}
-
 					// WP_Term_Query.
 					$alm_term_query = new WP_Term_Query( $args );
 
