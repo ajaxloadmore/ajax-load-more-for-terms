@@ -5,7 +5,7 @@ Author: Erick Danzer
 Author URI: https://connekthq.com/
 Plugin URI: https://connekthq.com/ajax-load-more/extensions/terms/
 Donate link: https://connekthq.com/donate/
-Tags: wp_term_query, get_terms, category, tag, taxonomy, terms, infinite scroll, load more
+Tags: infinite scroll, terms, category, tag, taxonomy
 Requires at least: 4.0
 Tested up to: 6.7
 Stable tag: 1.1.1
