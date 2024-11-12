@@ -1,14 +1,14 @@
 === Ajax Load More for Terms ===
 
-Contributors: dcooney, connekthq
-Author: Darren Cooney
+Contributors: edanzer, dcooney
+Author: Erick Danzer
 Author URI: https://connekthq.com/
 Plugin URI: https://connekthq.com/ajax-load-more/extensions/terms/
 Donate link: https://connekthq.com/donate/
-Tags: wp_term_query, get_terms, category, tag, taxonomy, terms, infinite scroll, load more
+Tags: infinite scroll, terms, category, tag, taxonomy
 Requires at least: 4.0
-Tested up to: 6.2
-Stable tag: 1.1
+Tested up to: 6.7
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://gnu.org/licenses/gpl-2.0.html
 
@@ -69,6 +69,10 @@ Once installed, visit the Ajax Load More Shortcode Builder and build a custom sh
 
 
 == Changelog ==
+
+= 1.1.1 - November 11, 2024 = 
+* UPDATE: Readme, contributors, WordPress tested version
+* NOTE: Plugin has new ownership
 
 = 1.1 - June 11, 2023 = 
 * UPDATE: Updated to add compatibility with Cache Add-on 2.0 and Ajax Load More 6.0.
