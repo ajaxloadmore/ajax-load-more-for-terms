@@ -4,11 +4,11 @@
  * Plugin URI: http://connekthq.com/plugins/ajax-load-more/extensions/terms/
  * Description: An Ajax Load More extension that adds compatibility for loading taxonomy terms via Ajax.
  * Text Domain: ajax-load-more-for-terms
- * Author: Erick Danzer
+ * Author: Darren Cooney
  * Author URI: https://connekthq.com
  * Version: 1.1.1
  * License: GPL
- * Copyright: Erick Danzer
+ * Copyright: Connekt Media & Darren Cooney
  *
  * @package ajax-load-more-for-terms
  */
@@ -31,8 +31,7 @@ register_activation_hook( __FILE__, 'alm_terms_install' );
  * Display admin notice if plugin does not meet the requirements.
  */
 function alm_terms_admin_notice() {
-	$slug   = 'ajax-load-more';
-	$plugin = $slug . '-for-terms';
+	$slug = 'ajax-load-more';
 	// Ajax Load More Notice.
 	if ( get_transient( 'alm_terms_admin_notice' ) ) {
 		$install_url = get_admin_url() . '/update.php?action=install-plugin&plugin=' . $slug . '&_wpnonce=' . wp_create_nonce( 'install-plugin_' . $slug );
@@ -81,7 +80,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 		 */
 		public function alm_terms_preloaded_query( $args, $preloaded_amount, $repeater, $theme_repeater ) {
 			$id                    = isset( $args['id'] ) ? sanitize_text_field( $args['id'] ) : '';
-			$post_id               = isset( $args['post_id'] ) ? sanitize_text_field( $args['post_id'] ) : '';
 			$offset                = isset( $args['offset'] ) ? sanitize_text_field( $args['offset'] ) : 0;
 			$preloaded_amount      = isset( $preloaded_amount ) ? $preloaded_amount : $args['term_query_number'];
 			$term_query            = isset( $args['term_query'] ) ? $args['term_query'] : false;
@@ -119,8 +117,8 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 				if ( $alm_term_query->terms ) {
 					ob_start();
 					foreach ( $alm_term_query->terms as $term ) {
-						$alm_item++;
-						$alm_current++;
+						++$alm_item;
+						++$alm_current;
 						if ( $theme_repeater !== 'null' && has_action( 'alm_get_term_query_theme_repeater' ) ) {
 							// Theme Repeater.
 							do_action( 'alm_get_term_query_theme_repeater', $theme_repeater, $alm_found_posts, $alm_page, $alm_item, $alm_current, $term );
@@ -148,11 +146,9 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$form_data       = filter_input_array( INPUT_GET, FILTER_SANITIZE_STRING );
 			$data            = isset( $form_data['term_query'] ) ? $form_data['term_query'] : '';
 			$id              = isset( $form_data['id'] ) ? sanitize_text_field( $form_data['id'] ) : '';
-			$post_id         = isset( $form_data['post_id'] ) ? sanitize_text_field( $form_data['post_id'] ) : '';
 			$repeater        = isset( $form_data['repeater'] ) ? sanitize_text_field( $form_data['repeater'] ) : 'default';
 			$type            = alm_get_repeater_type( $repeater );
 			$theme_repeater  = isset( $form_data['theme_repeater'] ) ? sanitize_text_field( $form_data['theme_repeater'] ) : 'null';
-			$posts_per_page  = isset( $form_data['posts_per_page'] ) ? sanitize_text_field( $form_data['posts_per_page'] ) : 5;
 			$page            = isset( $form_data['page'] ) ? (int) $form_data['page'] : 1;
 			$offset          = isset( $form_data['offset'] ) ? (int) $form_data['offset'] : 0;
 			$original_offset = $offset;
@@ -170,12 +166,8 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$preloaded_amount = 0;
 			if ( has_action( 'alm_preload_installed' ) && $preloaded === 'true' ) {
 				$preloaded_amount = isset( $form_data['preloaded_amount'] ) ? sanitize_text_field( $form_data['preloaded_amount'] ) : '5';
-				$old_offset       = $preloaded_amount;
 				$offset           = $offset + $preloaded_amount;
 			}
-
-			// SEO Add-on.
-			$seo_start_page = isset( $form_data['seo_start_page'] ) ? sanitize_text_field( $form_data['seo_start_page'] ) : 1;
 
 			// Get Term Data.
 			if ( $data ) {
@@ -222,7 +214,7 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 
 							ob_start();
 							foreach ( $alm_term_query->terms as $term ) {
-								$alm_current++; // Current item in loop.
+								++$alm_current; // Current item in loop.
 								$alm_page = $page + 1; // Get page number.
 								$alm_item = ( $alm_page * $term_query_number ) - $term_query_number + $alm_current + $preloaded_amount;
 								if ( $theme_repeater !== 'null' && has_action( 'alm_get_term_query_theme_repeater' ) ) {
@@ -267,7 +259,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			}
 
 			wp_send_json( $return );
-
 		}
 
 		/**
@@ -284,7 +275,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$count_args['offset'] = $offset;
 			$count_args['fields'] = 'tt_ids';
 			$term_query           = new WP_Term_Query( $count_args );
-
 			return count( $term_query->terms );
 		}
 
@@ -303,7 +293,6 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 			$return .= ' data-term-query-taxonomy="' . $term_query_taxonomy . '"';
 			$return .= ' data-term-query-hide-empty="' . $term_query_hide_empty . '"';
 			$return .= ' data-term-query-number="' . $term_query_number . '"';
-
 			return $return;
 		}
 
