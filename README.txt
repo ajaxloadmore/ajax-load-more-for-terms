@@ -61,7 +61,8 @@ Once installed, visit the Ajax Load More Shortcode Builder and build a custom sh
 == Changelog ==
 
 = 1.1.2 - June 5, 2025 = 
-* UPDATE: Updated require plugin, readme and WP tested version.
+* NEW: Adding Ajax Load More as a required plugin.
+* UPDATE: Code cleanup, readme and WP tested version.
 
 = 1.1.1 - November 11, 2024 = 
 * UPDATE: Readme, contributors, WordPress tested version.
