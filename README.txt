@@ -6,8 +6,8 @@ Plugin URI: https://connekthq.com/plugins/ajax-load-more/extensions/terms/
 Donate link: https://connekthq.com/donate/
 Tags: infinite scroll, terms, category, tag, taxonomy
 Requires at least: 4.0
-Tested up to: 6.7
-Stable tag: 1.1.1
+Tested up to: 6.8
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ Once installed, visit the Ajax Load More Shortcode Builder and build a custom sh
 5. Activate the plugin in the WP plugin dashboard.
 
 == Changelog ==
+
+= 1.1.2 - June 5, 2025 = 
+* UPDATE: Updated require plugin, readme and WP tested version.
 
 = 1.1.1 - November 11, 2024 = 
 * UPDATE: Readme, contributors, WordPress tested version.

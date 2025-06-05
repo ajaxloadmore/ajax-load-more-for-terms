@@ -2,13 +2,14 @@
 /**
  * Plugin Name: Ajax Load More for Terms
  * Plugin URI: http://connekthq.com/plugins/ajax-load-more/extensions/terms/
- * Description: An Ajax Load More extension that adds compatibility for loading taxonomy terms via Ajax.
+ * Description: Ajax Load More extension that adds compatibility for loading taxonomy terms.
  * Text Domain: ajax-load-more-for-terms
  * Author: Darren Cooney
  * Author URI: https://connekthq.com
- * Version: 1.1.1
+ * Version: 1.1.2
  * License: GPL
  * Copyright: Connekt Media & Darren Cooney
+ * Requires Plugins: ajax-load-more
  *
  * @package ajax-load-more-for-terms
  */
