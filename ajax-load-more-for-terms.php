@@ -35,11 +35,11 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 		 * @since 1.0
 		 */
 		public function __construct() {
-			add_action( 'alm_terms_installed', [ &$this, 'alm_terms_installed' ] );
-			add_filter( 'alm_terms_shortcode', [ &$this, 'alm_terms_shortcode' ], 10, 6 );
-			add_filter( 'alm_terms_preloaded', [ &$this, 'alm_terms_preloaded_query' ], 10, 4 );
-			add_action( 'wp_ajax_alm_get_terms', [ &$this, 'alm_get_terms_query' ] );
-			add_action( 'wp_ajax_nopriv_alm_get_terms', [ &$this, 'alm_get_terms_query' ] );
+			add_action( 'alm_terms_installed', [ $this, 'alm_terms_installed' ] );
+			add_filter( 'alm_terms_shortcode', [ $this, 'alm_terms_shortcode' ], 10, 6 );
+			add_filter( 'alm_terms_preloaded', [ $this, 'alm_terms_preloaded_query' ], 10, 4 );
+			add_action( 'wp_ajax_alm_get_terms', [ $this, 'alm_get_terms_query' ] );
+			add_action( 'wp_ajax_nopriv_alm_get_terms', [ $this, 'alm_get_terms_query' ] );
 		}
 
 		/**
