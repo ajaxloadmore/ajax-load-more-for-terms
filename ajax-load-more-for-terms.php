@@ -6,7 +6,7 @@
  * Text Domain: ajax-load-more-for-terms
  * Author: Darren Cooney
  * Author URI: https://connekthq.com
- * Version: 1.1.2
+ * Version: 1.2.0
  * License: GPL
  * Copyright: Connekt Media & Darren Cooney
  * Requires Plugins: ajax-load-more
@@ -116,29 +116,23 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 		 * @since 1.0
 		 */
 		public function alm_get_terms_query() {
-			$form_data       = filter_input_array( INPUT_GET, FILTER_SANITIZE_STRING );
-			$data            = isset( $form_data['term_query'] ) ? $form_data['term_query'] : '';
-			$id              = isset( $form_data['id'] ) ? sanitize_text_field( $form_data['id'] ) : '';
-			$repeater        = isset( $form_data['repeater'] ) ? sanitize_text_field( $form_data['repeater'] ) : 'default';
-			$type            = alm_get_repeater_type( $repeater );
-			$theme_repeater  = isset( $form_data['theme_repeater'] ) ? sanitize_text_field( $form_data['theme_repeater'] ) : 'null';
-			$page            = isset( $form_data['page'] ) ? (int) $form_data['page'] : 1;
-			$offset          = isset( $form_data['offset'] ) ? (int) $form_data['offset'] : 0;
-			$original_offset = $offset;
-			$canonical_url   = isset( $form_data['canonical_url'] ) ? esc_url( $form_data['canonical_url'] ) : $_SERVER['HTTP_REFERER'];
-			$query_type      = isset( $form_data['query_type'] ) ? sanitize_text_field( $form_data['query_type'] ) : 'standard';
+			$params = filter_input_array( INPUT_GET );
 
-			// Cache Add-on.
-			$cache_id        = isset( $form_data['cache_id'] ) ? sanitize_text_field( $form_data['cache_id'] ) : '';
-			$cache_slug      = isset( $form_data['cache_slug'] ) && $form_data['cache_slug'] ? sanitize_text_field( $form_data['cache_slug'] ) : '';
-			$cache_logged_in = isset( $form_data['cache_logged_in'] ) ? sanitize_text_field( $form_data['cache_logged_in'] ) : false;
-			$do_create_cache = $cache_logged_in === 'true' && is_user_logged_in() ? false : true;
+			$data            = isset( $params['term_query'] ) ? $params['term_query'] : '';
+			$id              = isset( $params['id'] ) ? sanitize_text_field( $params['id'] ) : '';
+			$repeater        = isset( $params['repeater'] ) ? sanitize_text_field( $params['repeater'] ) : 'default';
+			$type            = alm_get_repeater_type( $repeater );
+			$theme_repeater  = isset( $params['theme_repeater'] ) ? sanitize_text_field( $params['theme_repeater'] ) : 'null';
+			$page            = isset( $params['page'] ) ? (int) $params['page'] : 1;
+			$offset          = isset( $params['offset'] ) ? (int) $params['offset'] : 0;
+			$original_offset = $offset;
+			$query_type      = isset( $params['query_type'] ) ? sanitize_text_field( $params['query_type'] ) : 'standard';
 
 			// Preloaded Add-on.
-			$preloaded        = isset( $form_data['preloaded'] ) ? sanitize_text_field( $form_data['preloaded'] ) : false;
+			$preloaded        = isset( $params['preloaded'] ) ? sanitize_text_field( $params['preloaded'] ) : false;
 			$preloaded_amount = 0;
 			if ( has_action( 'alm_preload_installed' ) && $preloaded === 'true' ) {
-				$preloaded_amount = isset( $form_data['preloaded_amount'] ) ? sanitize_text_field( $form_data['preloaded_amount'] ) : '5';
+				$preloaded_amount = isset( $params['preloaded_amount'] ) ? sanitize_text_field( $params['preloaded_amount'] ) : '5';
 				$offset           = $offset + $preloaded_amount;
 			}
 
@@ -171,10 +165,12 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 					$alm_term_query = new WP_Term_Query( $args );
 
 					if ( $query_type === 'totalposts' ) {
-						// Paging add-on.
-						$return = [
-							'totalposts' => $this->alm_terms_count( $args, $original_offset ),
-						];
+						// Combined Preloaded & Paging add-ons.
+						wp_send_json(
+							[
+								'totalposts' => $this->alm_terms_count( $args, $original_offset ),
+							]
+						);
 
 					} else {
 						// Standard ALM.
@@ -207,16 +203,7 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 									'totalposts' => $alm_found_posts,
 								],
 							];
-
-							/**
-							 * Cache Add-on hook
-							 * If Cache is enabled, check the cache file
-							 *
-							 * @return void
-							 */
-							if ( $cache_id && method_exists( 'ALMCache', 'create_cache_file' ) && $do_create_cache ) {
-								ALMCache::create_cache_file( $cache_id, $cache_slug, $canonical_url, $data, $alm_post_count, $alm_found_posts );
-							}
+							
 						} else {
 							// No Results.
 							$return = [
@@ -227,11 +214,11 @@ if ( ! class_exists( 'ALM_TERMS' ) ) :
 								],
 							];
 						}
+						wp_send_json( $return );
 					}
 				}
 			}
-
-			wp_send_json( $return );
+			wp_die();
 		}
 
 		/**
